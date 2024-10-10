@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "xiosbase": "c",
+        "vector": "c",
+        "xstring": "c",
+        "xutility": "c",
+        "cmath": "c",
+        "math.h": "c",
+        "string.h": "c",
+        "stdio.h": "c",
+        "float.h": "c",
+        "stdlib.h": "c"
+    }
+}

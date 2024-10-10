@@ -1,0 +1,7 @@
+# build artifacts
+*.d
+*.o
+*.exe
+
+# ignore output images
+*.ppm
