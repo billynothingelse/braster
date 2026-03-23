@@ -14,6 +14,7 @@ void model_load(const char* filename, model_t* model)
 
     (*model).vert_count = 0;
     (*model).face_count = 0;
+    (*model).norm_count = 0;
 
     char line[MAX_STRING_LENGTH];
     while (fgets(line, MAX_STRING_LENGTH, model_file) != NULL) {
@@ -26,23 +27,42 @@ void model_load(const char* filename, model_t* model)
             printf("[model] found face %s\n", line);
             (*model).face_count++;
         }
+
+        if (line[0] == 'v' && line[1] == 'n') {
+            printf("[model] found normal %s\n", line);
+            (*model).norm_count++;
+        }
     }
 
     (*model).verts = (vec3_t*)malloc(sizeof(vec3_t) * (*model).vert_count);
     (*model).faces = (face_t*)malloc(sizeof(face_t) * (*model).face_count);
+    (*model).norms = (vec3_t*)malloc(sizeof(vec3_t) * (*model).norm_count);
 
     rewind(model_file);
 
-    int index = 0;
+    int vert_index = 0;
+    int norm_index = 0;
+    int face_index = 0;
     while (fgets(line, MAX_STRING_LENGTH, model_file) != NULL) {
         if (line[0] == 'v' && line[1] == ' ') {
             vec3_t v;
             sscanf(line, "v %f %f %f", &v.x, &v.y, &v.z);
-            (*model).verts[index] = v;
-            index++;
+            (*model).verts[vert_index] = v;
+            vert_index++;
 
-            if (index >= (*model).vert_count) {
-                index = 0;
+            if (vert_index >= (*model).vert_count) {
+                vert_index = 0;
+            }
+        }
+
+        if (line[0] == 'v' && line[1] == 'n') {
+            vec3_t n;
+            sscanf(line, "vn %f %f %f", &n.x, &n.y, &n.z);
+            (*model).norms[norm_index] = n;
+            norm_index++;
+
+            if (norm_index >= (*model).norm_count) {
+                norm_index = 0;
             }
         }
 
@@ -50,24 +70,28 @@ void model_load(const char* filename, model_t* model)
             obj_face_t face;
             memset(&face, 0, sizeof(obj_face_t));
             int d = sscanf(line, "f %i/%i/%i %i/%i/%i %i/%i/%i", 
-                &face.a.x, &face.a.y, &face.a.z,
-                &face.b.x, &face.b.y, &face.b.z,
-                &face.c.x, &face.c.y, &face.c.z);
+                &face.vertex.x, &face.uv.x, &face.normal.x,
+                &face.vertex.y, &face.uv.y, &face.normal.y,
+                &face.vertex.z, &face.uv.z, &face.normal.z);
             if (d == 9) {
-                printf("f %i %i/%i/%i %i/%i/%i %i/%i/%i \n", index,
-                face.a.x, face.a.y, face.a.z,
-                face.b.x, face.b.y, face.b.z,
-                face.c.x, face.c.y, face.c.z);
+                printf("f %i %i/%i/%i %i/%i/%i %i/%i/%i \n", face_index,
+                face.vertex.x, face.vertex.y, face.vertex.z,
+                face.uv.x, face.uv.y, face.uv.z,
+                face.normal.x, face.normal.y, face.normal.z);
 
                 face_t f;
                 memset(&f, 0, sizeof(face_t));
 
-                f.x = face.a.x - 1;
-                f.y = face.b.x - 1;
-                f.z = face.c.x - 1;
+                f.v.x = face.vertex.x - 1;
+                f.v.y = face.vertex.y - 1;
+                f.v.z = face.vertex.z - 1;
 
-                (*model).faces[index] = f;
-                index++;
+                f.n.x = face.normal.x - 1;
+                f.n.y = face.normal.y - 1;
+                f.n.z = face.normal.z - 1;
+
+                (*model).faces[face_index] = f;
+                face_index++;
             }
         }
     }
@@ -75,10 +99,11 @@ void model_load(const char* filename, model_t* model)
 
 void model_unload(model_t *model)
 {
-    if (model->faces != NULL && model->verts != NULL)
+    if (model->faces != NULL && model->verts != NULL && model->norms != NULL)
     {
         free(model->faces);
         free(model->verts);
+        free(model->norms);
     }
 }
 

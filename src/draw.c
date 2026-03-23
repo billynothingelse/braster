@@ -35,13 +35,14 @@ void draw_line(frame_image image, int x0, int y0, int x1, int y1, color_t color)
     }
 }
 
-void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, float *zbuffer, color_t col)
+void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, vec3_t n0, vec3_t n1, vec3_t n2, float *zbuffer)
 {
     int xmin = MIN(MIN(v0.x, v1.x), v2.x);
     int ymin = MIN(MIN(v0.y, v1.y), v2.y);
     int xmax = MAX(MAX(v0.x, v1.x), v2.x);
     int ymax = MAX(MAX(v0.y, v1.y), v2.y);
 
+    vec3_t light_dir = { 0, 0, 1 };
     vec2_t p;
     for (p.y = ymin; p.y <= ymax; p.y++)
     {
@@ -62,7 +63,18 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
                 if (zbuffer[(int)(p.x + p.y * image.width)] < pz)
                 {
                     zbuffer[(int)(p.x + p.y * image.width)] = pz;
-                    image_set_pixel(&image, (int)p.x, (int)p.y, col);
+
+                    vec3_t n = { 0, 0, 0 };
+                    n.x = n0.x * bc.x + n1.x * bc.y + n2.x * bc.z;
+                    n.y = n0.y * bc.x + n1.y * bc.y + n2.y * bc.z;
+                    n.z = n0.z * bc.x + n1.z * bc.y + n2.z * bc.z;
+
+                    float dot = n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z;
+                    if (dot > 0.0f) {
+                        u8 intensity = (u8)(dot * 255);
+                        color_t col = { intensity, intensity, intensity };
+                        image_set_pixel(&image, (int)p.x, (int)p.y, col);
+                    }
                 }
             }
         }

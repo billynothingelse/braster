@@ -74,7 +74,6 @@ int main()
     for (int i = 0; i < model.face_count; i++) {
         face_t face = model.faces[i];
         vec3_t screen_coords[3];
-        vec3_t world_coords[3];
         for (int j = 0; j < 3; j++) {
             vec3_t v = model.verts[face.u[j]];
 
@@ -87,38 +86,13 @@ int main()
                 h.w / h.w
             };
 
-            vec3_t d = { v_h.x, v_h.y, v_h.z };
-            screen_coords[j] = d;
-            world_coords[j] = v;
+            screen_coords[j] = (vec3_t){ v_h.x, v_h.y, v_h.z };
         }
 
-        vec3_t d1;
-        d1.x = world_coords[1].x - world_coords[0].x;
-        d1.y = world_coords[1].y - world_coords[0].y;
-        d1.z = world_coords[1].z - world_coords[0].z;
-
-        vec3_t d2;
-        d2.x = world_coords[2].x - world_coords[0].x;
-        d2.y = world_coords[2].y - world_coords[0].y;
-        d2.z = world_coords[2].z - world_coords[0].z;
-
-        vec3_t n = vec3_cross(d1, d2);
-
-        float distance = sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
-
-        n.x = n.x / distance;
-        n.y = n.y / distance;
-        n.z = n.z / distance;
-
-        float direction = (n.x * 0) + (n.y * 0) + (n.z * 1);
-        if (direction > 0) {
-            color_t light = { 
-                ((float)rand() / (float)RAND_MAX) * direction * 255, 
-                ((float)rand() / (float)RAND_MAX) * direction * 255, 
-                ((float)rand() / (float)RAND_MAX) * direction * 255
-            };
-            draw_triangle_barycentric(image, screen_coords[0], screen_coords[1], screen_coords[2], zbuffer, light);
-        }
+        draw_triangle_barycentric(image,
+            screen_coords[0], screen_coords[1], screen_coords[2],
+            model.norms[face.n.x], model.norms[face.n.y], model.norms[face.n.z],
+            zbuffer);
     }
 
     // write and export image data to ppm
