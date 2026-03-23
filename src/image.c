@@ -26,12 +26,12 @@ void image_set_pixel(frame_image* image, int x, int y, color_t color)
     
     int index = (((*image).height - y) * (*image).width + x) * 3;
 
-    memcpy((*image).data + index, (const char*)&color, 3);
+    memcpy((*image).data + index, (const u8*)&color, 3);
 }
 
 void image_render(frame_image image, const char* filename)
 {
-    FILE* file = fopen(filename, "w");
+    FILE* file = fopen(filename, "wb");
     if (file == NULL) {
         printf("Failed to write %s output image\n", filename);
         return;

@@ -112,7 +112,11 @@ int main()
 
         float direction = (n.x * 0) + (n.y * 0) + (n.z * 1);
         if (direction > 0) {
-            color_t light = { direction * 255, direction * 255, direction * 255 };
+            color_t light = { 
+                ((float)rand() / (float)RAND_MAX) * direction * 255, 
+                ((float)rand() / (float)RAND_MAX) * direction * 255, 
+                ((float)rand() / (float)RAND_MAX) * direction * 255
+            };
             draw_triangle_barycentric(image, screen_coords[0], screen_coords[1], screen_coords[2], zbuffer, light);
         }
     }
