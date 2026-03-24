@@ -80,13 +80,13 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
                     float dot = n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z;
                     if (dot > 0.0f) {
                         i32 diffuse_bpp = (*diffuse).header.pixel_depth / 8;
-                        i32 diffuse_x = (i32)(u * diffuse->header.width);
-                        i32 diffuse_y = (i32)(v * diffuse->header.height);
-                        i32 diffuse_idx = (diffuse_y * diffuse->header.width + diffuse_x) * diffuse_bpp;
+                        i32 diffuse_x = (i32)(u * ((*diffuse).header.width - 1));
+                        i32 diffuse_y = (i32)(v * ((*diffuse).header.height - 1));
+                        i32 diffuse_idx = (diffuse_y * (*diffuse).header.width + diffuse_x) * diffuse_bpp;
 
-                        u8 tex_b = diffuse->data[diffuse_idx + 0];
-                        u8 tex_g = diffuse->data[diffuse_idx + 1];
-                        u8 tex_r = diffuse->data[diffuse_idx + 2];
+                        u8 tex_b = (*diffuse).data[diffuse_idx + 0];
+                        u8 tex_g = (*diffuse).data[diffuse_idx + 1];
+                        u8 tex_r = (*diffuse).data[diffuse_idx + 2];
 
                         color_t col = { tex_r, tex_g, tex_b };
                         image_set_pixel(&image, (i32)p.x, (i32)p.y, col);

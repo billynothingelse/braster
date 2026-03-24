@@ -60,7 +60,7 @@ int main()
     printf("texture loaded: %d x %d, %d bpp  type: %d\n", texture.header.width, texture.header.height, texture.header.pixel_depth, texture.header.image_type);
 
     // setup viewport/projection
-    vec3_t camera = { 6.f, 0.f, 4.f };
+    vec3_t camera = { 1.f, 0.f, 4.f };
     vec3_t target = { 0.f, 0.f, 0.f };
     vec3_t blunder = { 0.f, 1.f, 0.f };
 
