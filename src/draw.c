@@ -88,7 +88,11 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
                         u8 tex_g = (*diffuse).data[diffuse_idx + 1];
                         u8 tex_r = (*diffuse).data[diffuse_idx + 2];
 
-                        color_t col = { tex_r, tex_g, tex_b };
+                        color_t col = { 
+                            (u8)(tex_r * dot), 
+                            (u8)(tex_g * dot), 
+                            (u8)(tex_b * dot) 
+                        };
                         image_set_pixel(&image, (i32)p.x, (i32)p.y, col);
                     }
                 }
