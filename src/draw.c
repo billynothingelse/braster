@@ -35,7 +35,7 @@ void draw_line(frame_image image, int x0, int y0, int x1, int y1, color_t color)
     }
 }
 
-void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, vec4_t uv0, vec4_t uv1, vec4_t uv2, tga_image_t* normal_map, float *zbuffer)
+void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, vec4_t uv0, vec4_t uv1, vec4_t uv2, tga_image_t* normal_map, tga_image_t* diffuse, float *zbuffer)
 {
     int xmin = MIN(MIN(v0.x, v1.x), v2.x);
     int ymin = MIN(MIN(v0.y, v1.y), v2.y);
@@ -64,7 +64,7 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
                     float u = uv0.x * bc.x + uv1.x * bc.y + uv2.x * bc.z;
                     float v = uv0.y * bc.x + uv1.y * bc.y + uv2.y * bc.z;
 
-                    int tx = (int)(u * (normal_map->header.width - 1));
+                    int tx = (int)(u * ((*normal_map).header.width - 1));
                     int ty = (int)(v * ((*normal_map).header.height - 1));
                     tx = MAX(0, MIN(tx, (*normal_map).header.width - 1));
                     ty = MAX(0, MIN(ty, (*normal_map).header.height - 1));
@@ -79,8 +79,16 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
 
                     float dot = n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z;
                     if (dot > 0.0f) {
-                        u8 intensity = (u8)(dot * 255);
-                        color_t col = { intensity, intensity, intensity };
+                        int diffuse_bpp = (*diffuse).header.pixel_depth / 8;
+                        int diffuse_x = (int)(u * diffuse->header.width);
+                        int diffuse_y = (int)(v * diffuse->header.height);
+                        int diffuse_idx = (diffuse_y * diffuse->header.width + diffuse_x) * diffuse_bpp;
+
+                        u8 tex_b = diffuse->data[diffuse_idx + 0];
+                        u8 tex_g = diffuse->data[diffuse_idx + 1];
+                        u8 tex_r = diffuse->data[diffuse_idx + 2];
+
+                        color_t col = { tex_r, tex_g, tex_b };
                         image_set_pixel(&image, (int)p.x, (int)p.y, col);
                     }
                 }

@@ -52,6 +52,10 @@ int main()
     tga_image_t texture;
     tga_load("african_head_nm.tga", &texture);
 
+    // load diffuse texture
+    tga_image_t diffuse;
+    tga_load("african_head_diffuse.tga", &diffuse);
+
     printf("model loaded: %d verts, %d faces, %d norms\n", model.vert_count, model.face_count, model.norm_count);
     printf("texture loaded: %d x %d, %d bpp  type: %d\n", texture.header.width, texture.header.height, texture.header.pixel_depth, texture.header.image_type);
 
@@ -103,6 +107,7 @@ int main()
             screen_coords[0], screen_coords[1], screen_coords[2],
             model.uvs[face.t.x], model.uvs[face.t.y], model.uvs[face.t.z],
             &texture,
+            &diffuse,
             zbuffer);
     }
 
@@ -114,6 +119,7 @@ int main()
     // cleanup
     model_unload(&model);
     tga_unload(&texture);
+    tga_unload(&diffuse);
     free(zbuffer);
 
     return 0;
