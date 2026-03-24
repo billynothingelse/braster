@@ -35,7 +35,7 @@ void draw_line(frame_image image, int x0, int y0, int x1, int y1, color_t color)
     }
 }
 
-void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, vec3_t n0, vec3_t n1, vec3_t n2, float *zbuffer)
+void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, vec4_t uv0, vec4_t uv1, vec4_t uv2, tga_image_t* normal_map, float *zbuffer)
 {
     int xmin = MIN(MIN(v0.x, v1.x), v2.x);
     int ymin = MIN(MIN(v0.y, v1.y), v2.y);
@@ -55,19 +55,27 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
                 continue;
             }
 
-            if (p.x >= 0 && p.y >= 0) {
-                float pz = 0;
-                pz += v0.z * p.x + p.y * 3;
-                pz += v1.z * p.x + p.y * 3;
-                pz += v2.z * p.x + p.y * 3;
+            if (p.x >= 0 && p.y >= 0 && p.x < image.width && p.y < image.height) {
+                float pz = v0.z * bc.x + v1.z * bc.y + v2.z * bc.z;
                 if (zbuffer[(int)(p.x + p.y * image.width)] < pz)
                 {
                     zbuffer[(int)(p.x + p.y * image.width)] = pz;
 
-                    vec3_t n = { 0, 0, 0 };
-                    n.x = n0.x * bc.x + n1.x * bc.y + n2.x * bc.z;
-                    n.y = n0.y * bc.x + n1.y * bc.y + n2.y * bc.z;
-                    n.z = n0.z * bc.x + n1.z * bc.y + n2.z * bc.z;
+                    float u = uv0.x * bc.x + uv1.x * bc.y + uv2.x * bc.z;
+                    float v = uv0.y * bc.x + uv1.y * bc.y + uv2.y * bc.z;
+
+                    int tx = (int)(u * (normal_map->header.width - 1));
+                    int ty = (int)(v * ((*normal_map).header.height - 1));
+                    tx = MAX(0, MIN(tx, (*normal_map).header.width - 1));
+                    ty = MAX(0, MIN(ty, (*normal_map).header.height - 1));
+                    int bpp = (*normal_map).header.pixel_depth / 8;
+                    int idx = (ty * (*normal_map).header.width + tx) * bpp;
+
+                    // encode from 0-255 to -1 to 1
+                    vec3_t n;
+                    n.x = ((*normal_map).data[idx + 2] / 255.0f) * 2.0f - 1.0f;
+                    n.y = ((*normal_map).data[idx + 1] / 255.0f) * 2.0f - 1.0f;
+                    n.z = ((*normal_map).data[idx + 0] / 255.0f) * 2.0f - 1.0f;
 
                     float dot = n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z;
                     if (dot > 0.0f) {

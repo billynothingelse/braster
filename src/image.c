@@ -16,15 +16,11 @@ void image_init(frame_image* image, int width, int height)
 
 void image_set_pixel(frame_image* image, int x, int y, color_t color)
 {
-    if (y <= 0) {
-        y = 1;
-    }
-
-    if (y >= 800) {
-        y = 800 - 1;
+    if (x < 0 || y < 0 || x >= (*image).width || y >= (*image).height) {
+        return;
     }
     
-    int index = (((*image).height - y) * (*image).width + x) * 3;
+    int index = (((*image).height - 1 - y) * (*image).width + x) * 3;
 
     memcpy((*image).data + index, (const u8*)&color, 3);
 }

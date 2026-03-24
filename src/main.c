@@ -1,6 +1,7 @@
 #include "image.h"
 #include "draw.h"
 #include "math.h"
+#include "tga.h"
 #include <math.h>
 #include <float.h>
 #include "model.h"
@@ -34,16 +35,25 @@ int main()
     int width = 800;
     char* filename = "frame.ppm";
     float* zbuffer;
-    model_t model;
 
     zbuffer = malloc(sizeof(float) * (height * width));
-    memset(zbuffer, 0, sizeof(*zbuffer));
+    for (int i = 0; i < height * width; i++) {
+        zbuffer[i] = -FLT_MAX;
+    }
 
     // initialize frame image
     image_init(&image, width, height);
 
     // load test model
+    model_t model;
     model_load("african_head.obj", &model);
+    
+    // load test texture
+    tga_image_t texture;
+    tga_load("african_head_nm.tga", &texture);
+
+    printf("model loaded: %d verts, %d faces, %d norms\n", model.vert_count, model.face_count, model.norm_count);
+    printf("texture loaded: %d x %d, %d bpp  type: %d\n", texture.header.width, texture.header.height, texture.header.pixel_depth, texture.header.image_type);
 
     // setup viewport/projection
     vec3_t camera = { 6.f, 0.f, 4.f };
@@ -91,7 +101,8 @@ int main()
 
         draw_triangle_barycentric(image,
             screen_coords[0], screen_coords[1], screen_coords[2],
-            model.norms[face.n.x], model.norms[face.n.y], model.norms[face.n.z],
+            model.uvs[face.t.x], model.uvs[face.t.y], model.uvs[face.t.z],
+            &texture,
             zbuffer);
     }
 
@@ -102,6 +113,7 @@ int main()
 
     // cleanup
     model_unload(&model);
+    tga_unload(&texture);
     free(zbuffer);
 
     return 0;
