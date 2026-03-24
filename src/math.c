@@ -56,8 +56,8 @@ vec3_t barycentric(vec3_t a, vec3_t b, vec3_t c, vec2_t p)
 
 void mat4_set(mat4_t* mat, float* m)
 {
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 4; i++) {
+    for (i32 j = 0; j < 4; j++) {
+        for (i32 i = 0; i < 4; i++) {
             (*mat).m[i][j] = m[j + 4 * i];
         }
     }
@@ -104,7 +104,7 @@ mat4_t mat4_make(float d00, float d01, float d02, float d03,
 mat4_t mat4_mul(mat4_t a, mat4_t b)
 {
     mat4_t r = {0};
-    for (int i = 0; i < 4; i++) {
+    for (i32 i = 0; i < 4; i++) {
         r.m[i][0] = a.m[i][0] * b.m[0][0] + a.m[i][1] * b.m[1][0] + a.m[i][2] * b.m[2][0] + a.m[i][3] * b.m[3][0];
         r.m[i][1] = a.m[i][0] * b.m[0][1] + a.m[i][1] * b.m[1][1] + a.m[i][2] * b.m[2][1] + a.m[i][3] * b.m[3][1];
         r.m[i][2] = a.m[i][0] * b.m[0][2] + a.m[i][1] * b.m[1][2] + a.m[i][2] * b.m[2][2] + a.m[i][3] * b.m[3][2];

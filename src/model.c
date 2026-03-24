@@ -47,10 +47,10 @@ void model_load(const char* filename, model_t* model)
 
     rewind(model_file);
 
-    int vert_index = 0;
-    int norm_index = 0;
-    int face_index = 0;
-    int uv_index = 0;
+    i32 vert_index = 0;
+    i32 norm_index = 0;
+    i32 face_index = 0;
+    i32 uv_index = 0;
 
     while (fgets(line, MAX_STRING_LENGTH, model_file) != NULL) {
         if (line[0] == 'v' && line[1] == ' ') {
@@ -92,7 +92,7 @@ void model_load(const char* filename, model_t* model)
         if (line[0] == 'f' && line[1] == ' ') {
             obj_face_t face;
             memset(&face, 0, sizeof(obj_face_t));
-            int d = sscanf(line, "f %i/%i/%i %i/%i/%i %i/%i/%i", 
+            i32 d = sscanf(line, "f %i/%i/%i %i/%i/%i %i/%i/%i", 
                 &face.vertex.x, &face.uv.x, &face.normal.x,
                 &face.vertex.y, &face.uv.y, &face.normal.y,
                 &face.vertex.z, &face.uv.z, &face.normal.z);
@@ -141,17 +141,17 @@ void model_render_wireframe(frame_image image, model_t model, color_t color)
         return;
     }
 
-    for (int i = 0; i < model.face_count; i++) {
+    for (i32 i = 0; i < model.face_count; i++) {
         face_t face = model.faces[i];
-        for (int j = 0; j < 3; j++) {
+        for (i32 j = 0; j < 3; j++) {
             vec3_t v0 = model.verts[face.u[j]];
             vec3_t v1 = model.verts[face.u[(j + 1) % 3]];
 
-            int x0 = (v0.x + 1.f) * image.width / 2.f;
-            int y0 = (v0.y + 1.f) * image.height / 2.f;
+            i32 x0 = (v0.x + 1.f) * image.width / 2.f;
+            i32 y0 = (v0.y + 1.f) * image.height / 2.f;
 
-            int x1 = (v1.x + 1.f) * image.width / 2.f;
-            int y1 = (v1.y + 1.f) * image.height / 2.f;
+            i32 x1 = (v1.x + 1.f) * image.width / 2.f;
+            i32 y1 = (v1.y + 1.f) * image.height / 2.f;
 
             draw_line(image, x0, y0, x1, y1, color);
         }

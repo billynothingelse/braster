@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static int tga_bytes_per_pixel(const tga_image_t* image)
+static i32 tga_bytes_per_pixel(const tga_image_t* image)
 {
     return image->header.pixel_depth / 8;
 }
 
-static int tga_read_pixel(FILE* file, int bpp, u8* out)
+static i32 tga_read_pixel(FILE* file, i32 bpp, u8* out)
 {
     return fread(out, 1, (size_t)bpp, file) == (size_t)bpp;
 }
@@ -32,7 +32,7 @@ void tga_load(const char* filename, tga_image_t* image)
     }
 
     {
-        int bpp = tga_bytes_per_pixel(image);
+        i32 bpp = tga_bytes_per_pixel(image);
         u64 image_size = (u64)(*image).header.width * (u64)(*image).header.height * (u64)bpp;
 
         if (bpp < 3 || bpp > 4) {
@@ -54,7 +54,7 @@ void tga_load(const char* filename, tga_image_t* image)
     }
 
     if ((*image).header.image_type == 2) {
-        int bpp = tga_bytes_per_pixel(image);
+        i32 bpp = tga_bytes_per_pixel(image);
         u64 image_size = (u64)(*image).header.width * (u64)(*image).header.height * (u64)bpp;
         if (fread((*image).data, 1, (size_t)image_size, file) != (size_t)image_size) {
             printf("[tga] unable to read raw image data\n");
@@ -65,7 +65,7 @@ void tga_load(const char* filename, tga_image_t* image)
         u64 pixel_count = (*image).header.width * (*image).header.height;
         u64 current_pixel = 0;
         u64 current_byte = 0;
-        int bpp = tga_bytes_per_pixel(image);
+        i32 bpp = tga_bytes_per_pixel(image);
         u8 pixel[4] = { 0 };
 
         do {
@@ -77,7 +77,7 @@ void tga_load(const char* filename, tga_image_t* image)
                 // raw chunk
                 chunk_header++;
 
-                for (int i = 0; i < chunk_header; i++) {
+                for (i32 i = 0; i < chunk_header; i++) {
                     if (!tga_read_pixel(file, bpp, pixel)) {
                         printf("[tga] unable to read raw chunk pixel\n");
                         free((*image).data);
@@ -106,7 +106,7 @@ void tga_load(const char* filename, tga_image_t* image)
                     return;
                 }
 
-                for (int i = 0; i < chunk_header; i++) {
+                for (i32 i = 0; i < chunk_header; i++) {
                     (*image).data[current_byte] = pixel[0];
                     (*image).data[current_byte + 1] = pixel[1];
                     (*image).data[current_byte + 2] = pixel[2];

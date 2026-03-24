@@ -24,13 +24,13 @@ typedef union _faceu {
 
 typedef struct {
     vec3_t* verts;
-    int vert_count;
+    i32 vert_count;
     face_t* faces;
-    int face_count;
+    i32 face_count;
     vec4_t* norms;
-    int norm_count;
+    i32 norm_count;
     vec4_t* uvs;
-    int uv_count;
+    i32 uv_count;
 } model_t;
 
 void model_load(const char* filename, model_t* model);

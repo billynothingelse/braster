@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-void image_init(frame_image* image, int width, int height)
+void image_init(frame_image* image, i32 width, i32 height)
 {
-    int pixels = 0;
+    i32 pixels = 0;
     (*image).width = width;
     (*image).height = height;
     pixels = (*image).width * (*image).height * 3;
@@ -14,13 +14,13 @@ void image_init(frame_image* image, int width, int height)
     memset((*image).data, 0, sizeof(u8) * pixels);
 }
 
-void image_set_pixel(frame_image* image, int x, int y, color_t color)
+void image_set_pixel(frame_image* image, i32 x, i32 y, color_t color)
 {
     if (x < 0 || y < 0 || x >= (*image).width || y >= (*image).height) {
         return;
     }
     
-    int index = (((*image).height - 1 - y) * (*image).width + x) * 3;
+    i32 index = (((*image).height - 1 - y) * (*image).width + x) * 3;
 
     memcpy((*image).data + index, (const u8*)&color, 3);
 }

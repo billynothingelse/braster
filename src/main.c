@@ -31,13 +31,13 @@ mat4_t get_look_at_mat(vec3_t eye, vec3_t center, vec3_t up)
 int main()
 {
     frame_image image;
-    int height = 800;
-    int width = 800;
+    i32 height = 800;
+    i32 width = 800;
     char* filename = "frame.ppm";
     float* zbuffer;
 
     zbuffer = malloc(sizeof(float) * (height * width));
-    for (int i = 0; i < height * width; i++) {
+    for (i32 i = 0; i < height * width; i++) {
         zbuffer[i] = -FLT_MAX;
     }
 
@@ -85,10 +85,10 @@ int main()
     mat4_t transform_mat = mat4_mul(viewport, mat4_mul(projection_mat, view_matrix));
 
     // draw filled (light from center)
-    for (int i = 0; i < model.face_count; i++) {
+    for (i32 i = 0; i < model.face_count; i++) {
         face_t face = model.faces[i];
         vec3_t screen_coords[3];
-        for (int j = 0; j < 3; j++) {
+        for (i32 j = 0; j < 3; j++) {
             vec3_t v = model.verts[face.u[j]];
 
             vec4_t v4 = { v.x, v.y, v.z, 1.0f };
