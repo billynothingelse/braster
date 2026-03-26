@@ -77,6 +77,16 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
                     n.y = ((*normal_map).data[idx + 1] / 255.0f) * 2.0f - 1.0f;
                     n.z = ((*normal_map).data[idx + 0] / 255.0f) * 2.0f - 1.0f;
 
+                    // reflected light
+                    // R = 2 * (N dot L) * N - L
+                    vec3_t reflected_light;
+                    reflected_light.x = n.x * 2.0f * (n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z) - light_dir.x;
+                    reflected_light.y = n.y * 2.0f * (n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z) - light_dir.y;
+                    reflected_light.z = n.z * 2.0f * (n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z) - light_dir.z;
+
+                    // specular intensity
+                    float specular = powf(MAX(0.0f, reflected_light.z), 32.0f);
+
                     float dot = n.x * light_dir.x + n.y * light_dir.y + n.z * light_dir.z;
                     if (dot > 0.0f) {
                         i32 diffuse_bpp = (*diffuse).header.pixel_depth / 8;
@@ -89,9 +99,9 @@ void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v
                         u8 tex_r = (*diffuse).data[diffuse_idx + 2];
 
                         color_t col = { 
-                            (u8)(tex_r * dot), 
-                            (u8)(tex_g * dot), 
-                            (u8)(tex_b * dot) 
+                            (u8)(tex_r * dot + 255.0f * specular), 
+                            (u8)(tex_g * dot + 255.0f * specular), 
+                            (u8)(tex_b * dot + 255.0f * specular) 
                         };
                         image_set_pixel(&image, (i32)p.x, (i32)p.y, col);
                     }
