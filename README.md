@@ -1,10 +1,16 @@
 # braster
 A learning project for software rendering, reading through ssloy/tinyrenderer, written in C. The goal was to learn about the basics of rendering a 3D object to the screen, focusing on the math involved and the techniques. Primarily used pikuma for the math portions to help build a more solid understanding of the fundementals.
 
+Initial rasterization:
 ![african_head.obj result](images/model_result.png)
 
+Normal texture application:
+![african_head.obj result](images/model_norm.png)
+
+Diffuse + Normal + Specular:
+![african_head.obj result](images/model_spec.png)
+
 ## TODO:
-- [ ] Implement texturing
 - [ ] Shading
 - [ ] Fix issue with certain colour values causing distortions (?)
 
