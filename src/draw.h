@@ -7,6 +7,6 @@
 
 void draw_line(frame_image image, i32 x0, i32 y0, i32 x1, i32 y1, color_t color);
 
-void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, vec4_t uv0, vec4_t uv1, vec4_t uv2, tga_image_t* normal_map, tga_image_t* diffuse, float *zbuffer);
+void draw_triangle_barycentric(frame_image image, vec3_t v0, vec3_t v1, vec3_t v2, vec4_t uv0, vec4_t uv1, vec4_t uv2, tga_image_t* normal_map, tga_image_t* diffuse, tga_image_t* specular, float *zbuffer);
 
 #endif // __DRAW_H__

@@ -1,6 +1,7 @@
 #ifndef __TGA_H__
 #define __TGA_H__
 
+#include "math.h"
 #include "types.h"
 
 #pragma pack(push, 1)
@@ -32,5 +33,8 @@ typedef struct {
 
 void tga_load(const char* filename, tga_image_t* image);
 void tga_unload(tga_image_t* image);
+
+color_t tga_get_pixel(tga_image_t* image, vec2_t uv);
+float tga_get_pixel_intensity(tga_image_t* image, vec2_t uv);
 
 #endif // __TGA_H__

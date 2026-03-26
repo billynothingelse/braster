@@ -56,6 +56,10 @@ int main()
     tga_image_t diffuse;
     tga_load("african_head_diffuse.tga", &diffuse);
 
+    // load specular texture
+    tga_image_t specular;
+    tga_load("african_head_spec.tga", &specular);
+
     printf("model loaded: %d verts, %d faces, %d norms\n", model.vert_count, model.face_count, model.norm_count);
     printf("texture loaded: %d x %d, %d bpp  type: %d\n", texture.header.width, texture.header.height, texture.header.pixel_depth, texture.header.image_type);
 
@@ -108,6 +112,7 @@ int main()
             model.uvs[face.t.x], model.uvs[face.t.y], model.uvs[face.t.z],
             &texture,
             &diffuse,
+            &specular,
             zbuffer);
     }
 
@@ -120,6 +125,7 @@ int main()
     model_unload(&model);
     tga_unload(&texture);
     tga_unload(&diffuse);
+    tga_unload(&specular);
     free(zbuffer);
 
     return 0;
